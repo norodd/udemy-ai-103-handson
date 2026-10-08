@@ -171,7 +171,7 @@ az role assignment create `
 ### 12. 仮想環境を作って依存を入れる
 ```powershell
 python -m venv .venv
-./.venv/bin/Activate.ps1
+./.venv/Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 2行目は Codespaces（Linux）の PowerShell 用です。Windows の PowerShell では `.\.venv\Scripts\Activate.ps1` にします。
