@@ -1,0 +1,91 @@
+# L1-3 実践: 「評価ゲート → デプロイ」を体験するための GitHub Actions 雛形（学習用）。
+#
+# ⚠️ このファイルはサンプルです。実際に動かすには、リポジトリ直下の
+#    .github/workflows/ にコピーしてください（GitHub はリポジトリ root の
+#    .github/workflows/ のみを実行します）。
+#
+# 認証は「キーレス＝OIDC フェデレーション資格情報」を使います（APIキー/シークレットを置かない）。
+#   事前に Entra ID でフェデレーション資格情報を構成し、リポジトリ変数に
+#   AZURE_CLIENT_ID / AZURE_TENANT_ID / AZURE_SUBSCRIPTION_ID を設定しておきます。
+#
+# ⚠️ microsoft/ai-agent-evals は執筆時点でプレビュー。利用時にバージョン/仕様を再確認。
+
+name: "Evaluate and Deploy (AI-103 L1-3 sample)"
+
+on:
+  # PR では「評価ゲート」だけを回す（デプロイはしない）
+  pull_request:
+    branches: [main]
+  # main への push（マージ）で「評価 → デプロイ」を回す
+  push:
+    branches: [main]
+  workflow_dispatch:   # 手動実行も可
+
+# OIDC（キーレス）に必要な権限
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  # ===== 1) 評価ゲート: テストクエリで品質/安全性を採点し、結果を Summary に出す =====
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure login (OIDC / キーレス)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Run AI Agent Evaluation（評価ゲート）
+        uses: microsoft/ai-agent-evals@v3-beta
+        with:
+          # Foundry プロジェクトのエンドポイント（リポジトリ変数で渡す）
+          azure-ai-project-endpoint: ${{ vars.AZURE_AI_PROJECT_ENDPOINT }}
+          # 評価に使うモデルデプロイ名
+          deployment-name: ${{ vars.EVAL_DEPLOYMENT_NAME }}
+          # 評価対象エージェント（agent-name:version 形式）
+          agent-ids: ${{ vars.AGENT_IDS }}
+          # 評価データセット（評価器＋テストクエリ）
+          data-path: ${{ github.workspace }}/01_plan_manage/L1-3_deploy_cicd/eval/dataset.json
+      # ⚠️ ai-agent-evals は結果を Summary に出すだけで、点数が低くてもジョブは失敗しない。
+      #    点数で止めたいときは、基準に届かなければ exit 1 するステップをここに足す
+      #    （needs が deploy を止めるのは、このジョブが「失敗」したときだけ）。
+
+  # ===== 2) デプロイ: main へのマージ時のみ。評価ゲートを通過してから実行 =====
+  deploy:
+    needs: evaluate                       # 評価ジョブが成功したときだけ実行（＝ゲート）
+    if: github.event_name == 'push'       # PR ではデプロイしない
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure login (OIDC / キーレス)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: What-if（変更プレビュー）
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az deployment group what-if \
+              --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} \
+              --template-file 01_plan_manage/L1-3_deploy_cicd/main.bicep \
+              --parameters foundryName=${{ vars.FOUNDRY_NAME }} projectName=${{ vars.PROJECT_NAME }} deploymentName=${{ vars.DEPLOYMENT_NAME }}
+
+      - name: Deploy（Bicep を適用）
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az deployment group create \
+              --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} \
+              --template-file 01_plan_manage/L1-3_deploy_cicd/main.bicep \
+              --parameters foundryName=${{ vars.FOUNDRY_NAME }} projectName=${{ vars.PROJECT_NAME }} deploymentName=${{ vars.DEPLOYMENT_NAME }}
