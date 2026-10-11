@@ -19,14 +19,17 @@ name: "Evaluate and Deploy (AI-103 L1-3 sample)"
 # 評価に続けてデプロイも実施します。workflow_dispatch を使えば GitHub の画面から
 # 手動実行できます。手動実行時は deploy ジョブの if 条件によりデプロイされません。
 on:
+
   # main ブランチを対象とした Pull Request が作成・更新されたときに実行します。
   # PR のマージ前に評価結果を確認するためのトリガーです。
   pull_request:
     branches: [main]
+
   # main ブランチへの push 時に実行します。PR を main にマージした場合も、
   # そのマージコミットの push として扱われるため、評価後にデプロイへ進みます。
   push:
     branches: [main]
+
   # GitHub の Actions 画面から手動で実行できるようにします。
   # このイベント単独では deploy ジョブの条件を満たさないため、評価のみ行います。
   workflow_dispatch:
@@ -36,12 +39,14 @@ on:
 # リポジトリ内容をチェックアウトするための読み取り権限だけを指定しています。
 # この設定はワークフロー内のすべてのジョブに適用されます。
 permissions:
+
   # Azure Login が GitHub の OIDC トークンを取得できるようにします。
   # Entra ID 側では、このリポジトリ／ブランチ等を信頼する
   # フェデレーション資格情報を事前に構成しておく必要があります。
   # write は GitHub の OIDC トークン発行を許可するための権限であり、
   # Azure リソースへの操作権限そのものは Entra ID のロール割り当てで決まります。
   id-token: write
+
   # actions/checkout がリポジトリのファイルを読み取るために必要です。
   # このワークフローではリポジトリへの書き込みは行わないため read に限定します。
   contents: read
@@ -49,10 +54,12 @@ permissions:
 jobs:
   # ===== 1) 評価ゲート: テストクエリで品質/安全性を採点し、結果を Summary に出す =====
   evaluate:
+
     # 評価ジョブを実行する GitHub ホステッドランナー。
     # 利用するアクション／CLI がこの環境で動作することを前提としています。
     runs-on: windows-latest
     steps:
+
       # ワークフローが実行されたコミットのリポジトリをランナーに取得します。
       # これにより評価データセットなど、リポジトリ内のファイルを参照できます。
       - name: Checkout
@@ -64,6 +71,7 @@ jobs:
       - name: Azure login (OIDC / キーレス)
         uses: azure/login@v2
         with:
+
           # 以下は GitHub リポジトリの Actions Variables に登録する値です。
           # vars コンテキストはシークレットではなく設定値を参照します。
           # これらの ID は秘密情報ではありませんが、実環境の値に置き換えてください。
@@ -77,16 +85,20 @@ jobs:
       - name: Run AI Agent Evaluation（評価ゲート）
         uses: microsoft/ai-agent-evals@v3-beta
         with:
+
           # 評価対象が所属する Azure AI Foundry プロジェクトのエンドポイント。
           # リポジトリの Actions Variables に AZURE_AI_PROJECT_ENDPOINT として登録します。
           azure-ai-project-endpoint: ${{ vars.AZURE_AI_PROJECT_ENDPOINT }}
+
           # 評価処理で使用するモデルのデプロイ名。
           # 対象プロジェクトで利用可能なデプロイ名を EVAL_DEPLOYMENT_NAME に登録します。
           deployment-name: ${{ vars.EVAL_DEPLOYMENT_NAME }}
+
           # 評価するエージェント ID。アクションが要求する agent-name:version 形式で指定し、
           # 複数指定の区切り方を含む正確な書式はアクションのバージョンに合わせてください。
           # GitHub の Actions Variables に AGENT_IDS として登録します。
           agent-ids: ${{ vars.AGENT_IDS }}
+
           # 評価器とテストクエリを含むデータセットのパス。
           # github.workspace はチェックアウト先のルートディレクトリを表します。
           # この例ではリポジトリ内の相対パスを絶対パスに組み立てています。
@@ -101,12 +113,15 @@ jobs:
 
   # ===== 2) デプロイ: main へのマージ時のみ。評価ゲートを通過してから実行 =====
   deploy:
+
     # evaluate ジョブが成功した後にのみ実行します。evaluate が失敗・キャンセルされると
     # このジョブは実行されません（ただし、評価点そのものの判定ではありません）。
     needs: evaluate
+
     # push イベント時だけデプロイします。pull_request と workflow_dispatch では
     # 条件が false になり、デプロイはスキップされます。
     if: github.event_name == 'push'
+
     # デプロイ用ジョブの実行環境。上の評価ジョブとは別のランナーです。
     runs-on: ubuntu-latest
     steps:
@@ -120,6 +135,7 @@ jobs:
       - name: Azure login (OIDC / キーレス)
         uses: azure/login@v2
         with:
+
           # 評価ジョブと同じ Azure のアプリケーション／テナント／サブスクリプションを指定。
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
