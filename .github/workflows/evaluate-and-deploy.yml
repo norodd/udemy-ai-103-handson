@@ -12,6 +12,8 @@
 
 name: "Evaluate and Deploy (AI-103 L1-3 sample)"
 
+# トリガー: PR 作成/更新時は評価ゲートのみ、main への push 時は評価ゲート＋デプロイ
+# 手動実行も可能
 on:
   # PR では「評価ゲート」だけを回す（デプロイはしない）
   pull_request:
