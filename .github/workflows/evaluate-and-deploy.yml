@@ -57,7 +57,7 @@ jobs:
 
     # 評価ジョブを実行する GitHub ホステッドランナー。
     # 利用するアクション／CLI がこの環境で動作することを前提としています。
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
 
       # ワークフローが実行されたコミットのリポジトリをランナーに取得します。
