@@ -10,83 +10,144 @@
 #
 # ⚠️ microsoft/ai-agent-evals は執筆時点でプレビュー。利用時にバージョン/仕様を再確認。
 
+# GitHub Actions の画面に表示されるワークフロー名。
+# 学習用サンプルであることが分かるよう、対象レッスンも名前に含めています。
 name: "Evaluate and Deploy (AI-103 L1-3 sample)"
 
-# トリガー: PR 作成/更新時は評価ゲートのみ、main への push 時は評価ゲート＋デプロイ
-# 手動実行も可能
+# ワークフローを起動するイベントを定義します。
+# PR の作成・更新では評価のみを実施し、main への push（通常はマージ）では
+# 評価に続けてデプロイも実施します。workflow_dispatch を使えば GitHub の画面から
+# 手動実行できます。手動実行時は deploy ジョブの if 条件によりデプロイされません。
 on:
-  # PR では「評価ゲート」だけを回す（デプロイはしない）
+  # main ブランチを対象とした Pull Request が作成・更新されたときに実行します。
+  # PR のマージ前に評価結果を確認するためのトリガーです。
   pull_request:
     branches: [main]
-  # main への push（マージ）で「評価 → デプロイ」を回す
+  # main ブランチへの push 時に実行します。PR を main にマージした場合も、
+  # そのマージコミットの push として扱われるため、評価後にデプロイへ進みます。
   push:
     branches: [main]
-  workflow_dispatch:   # 手動実行も可
+  # GitHub の Actions 画面から手動で実行できるようにします。
+  # このイベント単独では deploy ジョブの条件を満たさないため、評価のみ行います。
+  workflow_dispatch:
 
-# OIDC（キーレス）に必要な権限
+# このワークフロー実行時に GitHub Actions の GITHUB_TOKEN に付与する権限です。
+# 権限は必要最小限にし、OIDC 認証で Azure のトークンを要求するための権限と、
+# リポジトリ内容をチェックアウトするための読み取り権限だけを指定しています。
+# この設定はワークフロー内のすべてのジョブに適用されます。
 permissions:
+  # Azure Login が GitHub の OIDC トークンを取得できるようにします。
+  # Entra ID 側では、このリポジトリ／ブランチ等を信頼する
+  # フェデレーション資格情報を事前に構成しておく必要があります。
+  # write は GitHub の OIDC トークン発行を許可するための権限であり、
+  # Azure リソースへの操作権限そのものは Entra ID のロール割り当てで決まります。
   id-token: write
+  # actions/checkout がリポジトリのファイルを読み取るために必要です。
+  # このワークフローではリポジトリへの書き込みは行わないため read に限定します。
   contents: read
 
 jobs:
   # ===== 1) 評価ゲート: テストクエリで品質/安全性を採点し、結果を Summary に出す =====
   evaluate:
+    # 評価ジョブを実行する GitHub ホステッドランナー。
+    # 利用するアクション／CLI がこの環境で動作することを前提としています。
     runs-on: windows-latest
     steps:
+      # ワークフローが実行されたコミットのリポジトリをランナーに取得します。
+      # これにより評価データセットなど、リポジトリ内のファイルを参照できます。
       - name: Checkout
         uses: actions/checkout@v4
 
+      # GitHub OIDC を使って Azure にサインインします。クライアントシークレットを
+      # GitHub に保存せずに済みますが、Entra ID のフェデレーション資格情報と
+      # 対象 Azure リソースへの適切なロール割り当てが必要です。
       - name: Azure login (OIDC / キーレス)
         uses: azure/login@v2
         with:
+          # 以下は GitHub リポジトリの Actions Variables に登録する値です。
+          # vars コンテキストはシークレットではなく設定値を参照します。
+          # これらの ID は秘密情報ではありませんが、実環境の値に置き換えてください。
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
+      # Microsoft の AI Agent Evals アクションで、指定した Foundry エージェントを
+      # 評価データセットに基づいて評価します。アクションのバージョンや入力仕様は
+      # プレビュー中に変更される可能性があるため、利用時に公式情報を確認してください。
       - name: Run AI Agent Evaluation（評価ゲート）
         uses: microsoft/ai-agent-evals@v3-beta
         with:
-          # Foundry プロジェクトのエンドポイント（リポジトリ変数で渡す）
+          # 評価対象が所属する Azure AI Foundry プロジェクトのエンドポイント。
+          # リポジトリの Actions Variables に AZURE_AI_PROJECT_ENDPOINT として登録します。
           azure-ai-project-endpoint: ${{ vars.AZURE_AI_PROJECT_ENDPOINT }}
-          # 評価に使うモデルデプロイ名
+          # 評価処理で使用するモデルのデプロイ名。
+          # 対象プロジェクトで利用可能なデプロイ名を EVAL_DEPLOYMENT_NAME に登録します。
           deployment-name: ${{ vars.EVAL_DEPLOYMENT_NAME }}
-          # 評価対象エージェント（agent-name:version 形式）
+          # 評価するエージェント ID。アクションが要求する agent-name:version 形式で指定し、
+          # 複数指定の区切り方を含む正確な書式はアクションのバージョンに合わせてください。
+          # GitHub の Actions Variables に AGENT_IDS として登録します。
           agent-ids: ${{ vars.AGENT_IDS }}
-          # 評価データセット（評価器＋テストクエリ）
+          # 評価器とテストクエリを含むデータセットのパス。
+          # github.workspace はチェックアウト先のルートディレクトリを表します。
+          # この例ではリポジトリ内の相対パスを絶対パスに組み立てています。
           data-path: ${{ github.workspace }}/01_plan_manage/L1-3_deploy_cicd/eval/dataset.json
-      # ⚠️ ai-agent-evals は結果を Summary に出すだけで、点数が低くてもジョブは失敗しない。
-      #    点数で止めたいときは、基準に届かなければ exit 1 するステップをここに足す
-      #    （needs が deploy を止めるのは、このジョブが「失敗」したときだけ）。
+      # ⚠️ このサンプルの ai-agent-evals アクションは結果を Summary に出力しますが、
+      # 評価点が低いことだけを理由にジョブを失敗させるとは限りません。
+      # その場合、次の deploy ジョブも「評価ゲートを通過した」と判断して実行されます。
+      # 点数をデプロイ条件にするには、結果を取得して基準値と比較し、基準未達時に
+      # exit 1 などで evaluate ジョブを失敗させるステップを別途追加してください。
+      # deploy の needs は、evaluate が成功したかどうかを判定するものであり、
+      # 評価結果の点数を自動的に判定するものではありません。
 
   # ===== 2) デプロイ: main へのマージ時のみ。評価ゲートを通過してから実行 =====
   deploy:
-    needs: evaluate                       # 評価ジョブが成功したときだけ実行（＝ゲート）
-    if: github.event_name == 'push'       # PR ではデプロイしない
+    # evaluate ジョブが成功した後にのみ実行します。evaluate が失敗・キャンセルされると
+    # このジョブは実行されません（ただし、評価点そのものの判定ではありません）。
+    needs: evaluate
+    # push イベント時だけデプロイします。pull_request と workflow_dispatch では
+    # 条件が false になり、デプロイはスキップされます。
+    if: github.event_name == 'push'
+    # デプロイ用ジョブの実行環境。上の評価ジョブとは別のランナーです。
     runs-on: ubuntu-latest
     steps:
+      # デプロイ対象の Bicep ファイルを参照できるよう、同じリポジトリを取得します。
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 評価ジョブとは独立したランナーのため、このジョブでも Azure にログインします。
+      # OIDC を利用するには、このワークフローの push コンテキストを許可する
+      # Entra ID のフェデレーション資格情報が必要です。
       - name: Azure login (OIDC / キーレス)
         uses: azure/login@v2
         with:
+          # 評価ジョブと同じ Azure のアプリケーション／テナント／サブスクリプションを指定。
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
+      # 実際にリソースを変更する前に、テンプレートの適用による変更内容を表示します。
+      # what-if は変更をプレビューするコマンドであり、このステップ自体では通常
+      # デプロイを実行しません。内容や権限エラーがあれば、この時点でジョブが失敗します。
       - name: What-if（変更プレビュー）
         uses: azure/cli@v2
         with:
           inlineScript: |
+            # リソース グループ スコープで Bicep テンプレートを評価します。
+            # リソース グループ名とテンプレートのパラメーターは Actions Variables から取得。
             az deployment group what-if \
               --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} \
               --template-file 01_plan_manage/L1-3_deploy_cicd/main.bicep \
               --parameters foundryName=${{ vars.FOUNDRY_NAME }} projectName=${{ vars.PROJECT_NAME }} deploymentName=${{ vars.DEPLOYMENT_NAME }}
 
+      # what-if の後に Bicep テンプレートを実際に適用し、Azure リソースを作成・更新します。
+      # 実行前に What-if の結果、対象サブスクリプション／リソース グループ、
+      # および Entra ID に割り当てた権限が意図どおりであることを確認してください。
       - name: Deploy（Bicep を適用）
         uses: azure/cli@v2
         with:
           inlineScript: |
+            # リソース グループ スコープでデプロイを実行します。
+            # 以下の名前は GitHub リポジトリの Actions Variables で管理します。
             az deployment group create \
               --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} \
               --template-file 01_plan_manage/L1-3_deploy_cicd/main.bicep \
