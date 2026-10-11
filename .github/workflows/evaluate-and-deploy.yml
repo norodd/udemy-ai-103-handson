@@ -132,6 +132,7 @@ jobs:
       # 評価ジョブとは独立したランナーのため、このジョブでも Azure にログインします。
       # OIDC を利用するには、このワークフローの push コンテキストを許可する
       # Entra ID のフェデレーション資格情報が必要です。
+      # Azure CLI を使用してデプロイを実行するためのログインステップです。
       - name: Azure login (OIDC / キーレス)
         uses: azure/login@v2
         with:
