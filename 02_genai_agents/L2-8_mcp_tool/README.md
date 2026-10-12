@@ -14,7 +14,7 @@
 | `README.md` | このファイル（手順とコマンド） |
 
 ## 前提
-- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-ai103`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
+- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-udemy-ai-103-training`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
 - `az login` 済み ／ Python 3.11+
 - モデルは `gpt-5.4` を使います。Foundry Agent Service の「Tool support by region and model」（エージェントに持たせるツールの対応表）で、`gpt-5.4` は **MCP が Yes** です（関数ツールの Functions は No なので、L2-7 とは使えるモデルが違います）。講座の `japaneast` も MCP が yes です。
 - GitHub のアカウント。
@@ -55,7 +55,7 @@
 
 ### 1. 共通リソースの名前を変数に入れる
 ```powershell
-$RG = "rg-ai103"
+$RG = "rg-udemy-ai-103-training"
 $FOUNDRY = az cognitiveservices account list --resource-group $RG --query "[?kind=='AIServices'] | [0].name" -o tsv
 $FOUNDRY
 ```

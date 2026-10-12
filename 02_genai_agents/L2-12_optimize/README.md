@@ -25,7 +25,7 @@ Learn の Prompt engineering techniques は、**このページの技法（few-s
 | `README.md` | このファイル（手順とコマンド） |
 
 ## 前提
-- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-ai103`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
+- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-udemy-ai-103-training`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
 - `az login` 済み ／ Python 3.11+
 - デプロイ `gpt-4.1-mini` と `gpt-5.4` があること（手順2で確かめます。`gpt-4.1-mini` は L2-10 の手順2、`gpt-5.4` は L1-1 の手順2で作成）。
 
@@ -54,7 +54,7 @@ Learn の Prompt engineering techniques は、**このページの技法（few-s
 
 ### 1. 共通リソースの名前を変数に入れる
 ```powershell
-$RG = "rg-ai103"
+$RG = "rg-udemy-ai-103-training"
 $FOUNDRY = az cognitiveservices account list --resource-group $RG --query "[?kind=='AIServices'] | [0].name" -o tsv
 $FOUNDRY
 ```

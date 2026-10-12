@@ -15,7 +15,7 @@
 | `README.md` | このファイル（手順とコマンド） |
 
 ## 前提
-- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-ai103`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
+- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-udemy-ai-103-training`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
 - L1-1 でデプロイした `gpt-5.4` を使います（Code Interpreter に対応。無い場合は L1-1 の README 手順2でデプロイ）。
 - `az login` 済み ／ Python 3.11+
 - **新しいリソースは作りません**。推論を数回するだけです。ただし **Code Interpreter はトークン料金とは別に、セッション単位で課金**されます（Code Interpreter を呼んだ会話ごとに1セッション。むやみに実行し直さないのが節約になります）。
@@ -44,7 +44,7 @@
 
 ### 1. 共通リソースの名前を変数に入れる
 ```powershell
-$RG = "rg-ai103"
+$RG = "rg-udemy-ai-103-training"
 $FOUNDRY = az cognitiveservices account list --resource-group $RG --query "[?kind=='AIServices'] | [0].name" -o tsv
 $FOUNDRY
 ```

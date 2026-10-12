@@ -14,7 +14,7 @@
 | `README.md` | このファイル（手順とコマンド） |
 
 ## 前提
-- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-ai103`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
+- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-udemy-ai-103-training`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
 - **L1-6 でプロジェクトに Application Insights（`ai103-appinsights`）を接続済み**であること。まだなら、L1-6 の README の手順4・5で作って接続します（手順3で確かめられます）。
 - `az login` 済み ／ Python 3.11+
 - トレースを読むには、Application Insights に **Log Analytics Reader** 以上が要ります（リソースグループの Owner／Contributor なら含まれます）。
@@ -47,7 +47,7 @@
 
 ### 1. 共通リソースの名前を変数に入れる
 ```powershell
-$RG = "rg-ai103"
+$RG = "rg-udemy-ai-103-training"
 $PROJECT = "ai103-project"
 $FOUNDRY = az cognitiveservices account list --resource-group $RG --query "[?kind=='AIServices'] | [0].name" -o tsv
 $PROJECT_ID = az cognitiveservices account project show --name $FOUNDRY --resource-group $RG --project-name $PROJECT --query id -o tsv

@@ -4,8 +4,8 @@
 # ※ ロール割り当て・local auth 無効化には十分な権限（Owner / User Access Administrator 等）が必要。
 
 # --- 変数 (自分の環境に合わせて変更) ---
-# ⚠️ disableLocalAuth を変えるので、講座共通の rg-ai103 ではなく練習用の RG で行う（README 手順1〜5で作成）
-$RG      = "rg-ai103-l15"
+# ⚠️ disableLocalAuth を変えるので、講座共通の rg-udemy-ai-103-training ではなく練習用の RG で行う（README 手順1〜5で作成）
+$RG      = "rg-udemy-ai-103-training-l15"
 $FOUNDRY = $ACCOUNT                        # Foundry(AIServices) リソース名（README 手順1の $ACCOUNT。
 #   別のシェルで開き直したときは $FOUNDRY = 'ai103-l15-12345' のように単一引用符で名前を入れる）
 $PROJECT = "ai103-l15-proj"               # プロジェクト名
@@ -103,7 +103,7 @@ az cognitiveservices account keys regenerate -n $FOUNDRY -g $RG --key-name Key2
 
 # --- 後片付け ---
 # README 手順17 と同じ。練習用 RG ごと削除して purge する（ロールの割り当て先・キーもリソースと一緒に無くなる）。
-# $RG が講座共通の rg-ai103 ではないことを目で確かめてから実行する。
+# $RG が講座共通の rg-udemy-ai-103-training ではないことを目で確かめてから実行する。
 # $RG
 # az group delete --name $RG --yes --no-wait
 # （数分待って削除が終わったら）

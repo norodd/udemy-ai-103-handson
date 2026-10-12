@@ -14,10 +14,10 @@
 | `README.md` | このファイル（手順とコマンド） |
 
 ## 前提
-- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-ai103`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
+- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-udemy-ai-103-training`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
 - モデルは **`gpt-5.4`**（L1-1 で講座共通のプロジェクトにデプロイ済み）。
 - `az login` 済み ／ Python 3.11+
-- ロール：`rg-ai103` にリソースを作れること（Contributor 以上）。トレースを読むには、Application Insights に **Log Analytics Reader** 以上が要ります（リソースグループの Owner／Contributor なら含まれます）。
+- ロール：`rg-udemy-ai-103-training` にリソースを作れること（Contributor 以上）。トレースを読むには、Application Insights に **Log Analytics Reader** 以上が要ります（リソースグループの Owner／Contributor なら含まれます）。
 - 費用：Application Insights（Log Analytics）は、主に**取り込んだデータ量**で課金されます（Application Insights のデータは、既定の保持期間の範囲なら保持の料金はかかりません）。このハンズオンで送るのは数十 KB 程度です。
 
 ## 進め方（コピペで実行できます）
@@ -47,7 +47,7 @@
 
 ### 1. 共通リソースの名前を変数に入れる
 ```powershell
-$RG = "rg-ai103"
+$RG = "rg-udemy-ai-103-training"
 $LOC = "japaneast"
 $PROJECT = "ai103-project"
 $FOUNDRY = az cognitiveservices account list --resource-group $RG --query "[?kind=='AIServices'] | [0].name" -o tsv

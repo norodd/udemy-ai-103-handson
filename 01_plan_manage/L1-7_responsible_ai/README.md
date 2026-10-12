@@ -18,7 +18,7 @@
 | `.env.sample` | 環境変数の雛形 |
 
 ## 前提
-- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-ai103`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
+- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-udemy-ai-103-training`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
 - 講座共通のリソースに `gpt-5.4-nano` のデプロイがあること（手順2で確かめます。無ければ `deployment_strict.json` と同じモデルで作っておきます）。
 - `az login` 済み ／ Python 3.11+
 - ロール：ガードレールとデプロイを作るには、Foundry リソースに **Foundry Account Owner**、または **Contributor**（Cognitive Services Contributor）以上。評価用のリソースグループを作るには、サブスクリプションに Contributor 以上。推論と評価には、プロジェクトに **Foundry User**。
@@ -58,7 +58,7 @@
 
 ### 1. 共通リソースの名前を変数に入れる
 ```powershell
-$RG = "rg-ai103"
+$RG = "rg-udemy-ai-103-training"
 $PROJECT = "ai103-project"
 $FOUNDRY = az cognitiveservices account list --resource-group $RG --query "[?kind=='AIServices'] | [0].name" -o tsv
 $FOUNDRY_ID = az cognitiveservices account show --name $FOUNDRY --resource-group $RG --query id -o tsv
@@ -174,7 +174,7 @@ python safety_eval.py
 
 ### 13. 評価用のリソースとプロジェクトを East US 2 に作る
 ```powershell
-$EVAL_RG = "rg-ai103-l17"
+$EVAL_RG = "rg-udemy-ai-103-training-l17"
 $EVAL_LOC = "eastus2"
 $EVAL_ACCOUNT = "ai103-l17-$(Get-Random -Minimum 10000 -Maximum 99999)"
 az group create --name $EVAL_RG --location $EVAL_LOC --query "{name:name, state:properties.provisioningState}" -o table
@@ -215,7 +215,7 @@ az rest --method get --url "$API/raiPolicies?$V" --query "value[].name" -o tsv
 最後の一覧が `Microsoft.Default`・`Microsoft.DefaultV2`・`Microsoft.MAIDefault` の3つに戻ればOKです。
 
 ### 16. 後片付け②：評価用のリソースグループを消して purge する
-講座共通の `rg-ai103` ではないことを確かめてから削除します。
+講座共通の `rg-udemy-ai-103-training` ではないことを確かめてから削除します。
 ```powershell
 $EVAL_RG
 az group delete --name $EVAL_RG --yes --no-wait

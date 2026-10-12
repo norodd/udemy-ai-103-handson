@@ -17,7 +17,7 @@
 | `requirements.txt` | Python 依存パッケージ |
 
 ## 前提
-- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-ai103`・Foundry リソース・Foundry User ロール）。
+- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-udemy-ai-103-training`・Foundry リソース・Foundry User ロール）。
 - 採点役（judge）に使う **`gpt-4.1-mini`** のデプロイがあること（手順2で確かめます。無い場合は下の「つまずき」の作り方）。
 - `az login` 済み ／ Python 3.11+
 - **講座共通のリソースは変更しません**。評価はローカルで行い、Azure 側に作るものはありません。
@@ -48,7 +48,7 @@
 
 ### 1. 共通リソースの名前を変数に入れる
 ```powershell
-$RG = "rg-ai103"
+$RG = "rg-udemy-ai-103-training"
 $FOUNDRY = az cognitiveservices account list --resource-group $RG --query "[?kind=='AIServices'] | [0].name" -o tsv
 $FOUNDRY
 ```

@@ -14,7 +14,7 @@ Responses API の function calling ループを**自分の手で回し**、2つ�
 | `README.md` | このファイル（手順とコマンド） |
 
 ## 前提
-- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-ai103`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
+- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-udemy-ai-103-training`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
 - L1-1 でデプロイした `gpt-5.4` を使います（無い場合は、L1-1 の README 手順2でデプロイするか、`gpt-5.4-nano` に読み替え）。
 - `az login` 済み ／ Python 3.11+
 - **新しいリソースは作りません**。推論を数回するだけです（数円程度）。
@@ -42,7 +42,7 @@ Responses API の function calling ループを**自分の手で回し**、2つ�
 
 ### 1. 共通リソースの名前を変数に入れる
 ```powershell
-$RG = "rg-ai103"
+$RG = "rg-udemy-ai-103-training"
 $FOUNDRY = az cognitiveservices account list --resource-group $RG --query "[?kind=='AIServices'] | [0].name" -o tsv
 $FOUNDRY
 ```

@@ -14,7 +14,7 @@
 | `README.md` | このファイル（手順とコマンド） |
 
 ## 前提
-- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-ai103`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
+- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-udemy-ai-103-training`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
 - **`az login` 済み**（このコードは `AzureCliCredential` を使うので、`az login` のサインインだけで動きます）／ Python 3.11+
 - モデルは **`gpt-5.4`**（L1-1 で講座共通のプロジェクトにデプロイ済み）。
 - ⚠️ **Agent Framework は活発に進化中**です。クラス名・引数が変わることがあるので、動かないときは公式サンプルで最新の書き方を確かめてください：https://github.com/microsoft/agent-framework/tree/main/python/samples/03-workflows/orchestrations
@@ -44,7 +44,7 @@
 
 ### 1. 共通リソースの名前を変数に入れる
 ```powershell
-$RG = "rg-ai103"
+$RG = "rg-udemy-ai-103-training"
 $FOUNDRY = az cognitiveservices account list --resource-group $RG --query "[?kind=='AIServices'] | [0].name" -o tsv
 $FOUNDRY
 ```

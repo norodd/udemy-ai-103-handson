@@ -13,7 +13,7 @@ Document Intelligence の **Layout モデル（`prebuilt-layout`）** で PDF �
 | `README.md` | このファイル（手順とコマンド） |
 
 ## 前提
-- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-ai103`・Foundry リソース・**Foundry User ロール**）。
+- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-udemy-ai-103-training`・Foundry リソース・**Foundry User ロール**）。
 - `az login` 済み ／ Python 3.11+
 - **Document Intelligence は、講座共通の Foundry リソースにそのまま入っています**（Foundry リソースは複数の AI サービスをまとめたリソースで、Document Intelligence もカスタムドメインのエンドポイントから呼べます）。Document Intelligence 用のリソースを別に作る必要はありません。モデルのデプロイも要りません。
 
@@ -42,7 +42,7 @@ Document Intelligence の **Layout モデル（`prebuilt-layout`）** で PDF �
 
 ### 1. 共通リソースの名前を変数に入れる
 ```powershell
-$RG = "rg-ai103"
+$RG = "rg-udemy-ai-103-training"
 $FOUNDRY = az cognitiveservices account list --resource-group $RG --query "[?kind=='AIServices'] | [0].name" -o tsv
 $FOUNDRY
 ```

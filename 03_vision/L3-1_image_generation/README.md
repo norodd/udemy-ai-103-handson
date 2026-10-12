@@ -47,7 +47,7 @@
 
 ### 1. このレッスン用の名前を変数に決める
 ```powershell
-$RG = "rg-ai103-gen"
+$RG = "rg-udemy-ai-103-training-gen"
 $LOCATION = "eastus2"
 $ACCOUNT = "ai103-gen-$(Get-Random -Minimum 10000 -Maximum 99999)"
 $DEPLOY = "gpt-image-2"
@@ -166,7 +166,7 @@ python -c "from PIL import Image; m=Image.open('mask.png'); print(m.size, m.getp
 $RG
 az group delete --name $RG --yes --no-wait
 ```
-`$RG` が講座共通の `rg-ai103` ではなく `rg-ai103-gen` であることを確かめてから実行します。削除が終わったら（数分）、purge してクォータを空けます。
+`$RG` が講座共通の `rg-udemy-ai-103-training` ではなく `rg-udemy-ai-103-training-gen` であることを確かめてから実行します。削除が終わったら（数分）、purge してクォータを空けます。
 ```powershell
 az cognitiveservices account list-deleted --query "[?name=='$ACCOUNT'].{name:name, location:location}" -o table
 az cognitiveservices account purge --name $ACCOUNT --resource-group $RG --location $LOCATION

@@ -54,7 +54,7 @@
 
 ### 1. このレッスン用の名前を変数に決める
 ```powershell
-$RG = "rg-ai103-video"
+$RG = "rg-udemy-ai-103-training-video"
 $LOCATION = "swedencentral"
 $ACCOUNT = "ai103-vid-$(Get-Random -Minimum 10000 -Maximum 99999)"
 $DEPLOY = "sora-2"
@@ -183,9 +183,9 @@ python main.py delete all
 ```powershell
 $RG
 az group delete --name $RG --yes --no-wait
-az group delete --name rg-ai103-gen --yes --no-wait
+az group delete --name rg-udemy-ai-103-training-gen --yes --no-wait
 ```
-- 1行目で `$RG` が講座共通の `rg-ai103` ではなく `rg-ai103-video` であることを確かめてから実行します。
+- 1行目で `$RG` が講座共通の `rg-udemy-ai-103-training` ではなく `rg-udemy-ai-103-training-video` であることを確かめてから実行します。
 - 3行目は L3-1（画像生成）で作ったリソースグループです。L3-1 をやっていない場合は `ResourceGroupNotFound` になりますが、問題ありません。
 
 削除が終わったら（数分）、削除済みのリソースを purge してクォータを空けます。
@@ -194,7 +194,7 @@ az cognitiveservices account list-deleted `
   --query "[?contains(name,'ai103-vid') || contains(name,'ai103-gen')].{name:name, location:location}" -o table
 az cognitiveservices account purge --name $ACCOUNT --resource-group $RG --location $LOCATION
 ```
-L3-1 の `ai103-gen-…` も一覧に出たら、その名前で同じように purge します（`--resource-group rg-ai103-gen --location eastus2`）。削除しただけのリソースは、デプロイのクォータを最大48時間つかんだままになります。purge には、サブスクリプション単位の Contributor（または Cognitive Services Contributor）が必要です。
+L3-1 の `ai103-gen-…` も一覧に出たら、その名前で同じように purge します（`--resource-group rg-udemy-ai-103-training-gen --location eastus2`）。削除しただけのリソースは、デプロイのクォータを最大48時間つかんだままになります。purge には、サブスクリプション単位の Contributor（または Cognitive Services Contributor）が必要です。
 
 ## 注意点（試験の論点）
 - 動画生成は**非同期のジョブ**です。作成（create）→ 状態の確認（retrieve、ポーリング）→ 取得（download_content）の3段で、作成の応答に動画は入っていません。

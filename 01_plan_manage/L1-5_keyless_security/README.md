@@ -17,7 +17,7 @@
 
 ## 前提
 - L0-3（Hello, Foundry）を終えていること（`az login` 済み・Python 3.11+・Azure CLI 2.80.0 以上）
-- このレッスンは **キー認証を止める（`disableLocalAuth`）** ので、講座共通のリソース（`rg-ai103`）では行いません。**練習用のリソースグループ `rg-ai103-l15` に Foundry リソースを作って試し、最後に丸ごと消します**。共通のリソースには一切触れません。
+- このレッスンは **キー認証を止める（`disableLocalAuth`）** ので、講座共通のリソース（`rg-udemy-ai-103-training`）では行いません。**練習用のリソースグループ `rg-udemy-ai-103-training-l15` に Foundry リソースを作って試し、最後に丸ごと消します**。共通のリソースには一切触れません。
 - ロール割り当てには、サブスクリプションかリソースグループで **Owner** または **User Access Administrator** が必要です。
 
 ## 進め方（コピペで実行できます）
@@ -53,7 +53,7 @@
 
 ### 1. 練習用の名前を変数に決める
 ```powershell
-$RG = "rg-ai103-l15"
+$RG = "rg-udemy-ai-103-training-l15"
 $LOCATION = "japaneast"
 $ACCOUNT = "ai103-l15-$(Get-Random -Minimum 10000 -Maximum 99999)"
 $PROJECT = "ai103-l15-proj"
@@ -204,7 +204,7 @@ python keyless_openai_direct.py
 - 組織全体に強制したいときは、Azure Policy「Azure AI Services resources should have key access disabled」を使います。
 
 ### 17. 後片付け（練習用のリソースグループを消して purge）
-講座共通の `rg-ai103` ではないことを確かめてから削除します。
+講座共通の `rg-udemy-ai-103-training` ではないことを確かめてから削除します。
 ```powershell
 $env:FOUNDRY_API_KEY = $null
 $RG

@@ -5,7 +5,7 @@
 #
 # 事前に `az login` 済み、かつ Bicep CLI が利用可能（az に同梱）であること。
 
-$RG = "rg-ai103-l13"             # 練習用（講座共通の rg-ai103 とは別。最後に丸ごと消す）
+$RG = "rg-udemy-ai-103-training-l13"             # 練習用（講座共通の rg-udemy-ai-103-training とは別。最後に丸ごと消す）
 $LOCATION = "japaneast"
 # ⚠️ $ACCOUNT はサブドメインになるので「全世界で一意」。下の値のままだと
 #    CustomDomainInUse で弾かれる場合がある。末尾に自分用の英数字を足すこと。

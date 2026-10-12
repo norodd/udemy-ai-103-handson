@@ -16,7 +16,7 @@
 | `README.md` | このファイル（手順とコマンド） |
 
 ## 前提
-- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-ai103`・Foundry リソース・プロジェクト `ai103-project`・**Foundry User ロール**）。
+- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-udemy-ai-103-training`・Foundry リソース・プロジェクト `ai103-project`・**Foundry User ロール**）。
 - `az login` 済み ／ Python 3.11+
 - デプロイ `gpt-5.4` があること（手順2で確かめます。無ければ L1-1 の README の手順2で作成）。
 - **Azure Language は、講座共通の Foundry リソースにそのまま入っています**（Foundry リソースは複数の AI サービスをまとめたリソースで、Language のエンドポイントも持っています）。Language 用のリソースを別に作る必要はありません。呼び出しに要るロールは、L0-3 の手順8でリソースに付けた **Foundry User** で足ります（Language 専用の `Cognitive Services Language Reader` でも可）。
@@ -45,7 +45,7 @@
 
 ### 1. 共通リソースの名前を変数に入れる
 ```powershell
-$RG = "rg-ai103"
+$RG = "rg-udemy-ai-103-training"
 $FOUNDRY = az cognitiveservices account list --resource-group $RG --query "[?kind=='AIServices'] | [0].name" -o tsv
 $FOUNDRY
 ```

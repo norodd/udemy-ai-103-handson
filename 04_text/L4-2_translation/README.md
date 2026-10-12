@@ -13,7 +13,7 @@ Azure Translator のテキスト翻訳 API（GA `2026-06-06`）で、①**NMT**�
 | `README.md` | このファイル（手順とコマンド） |
 
 ## 前提
-- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-ai103`・Foundry リソース・プロジェクト `ai103-project`・**Foundry User ロール**）。
+- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-udemy-ai-103-training`・Foundry リソース・プロジェクト `ai103-project`・**Foundry User ロール**）。
 - `az login` 済み ／ Python 3.11+
 - デプロイ `gpt-5.4` があること（手順2で確かめます。無ければ L1-1 の README の手順2で作成）。
 - **Azure Translator は、講座共通の Foundry リソースにそのまま入っています**（Foundry リソースは複数の AI サービスをまとめたリソースで、Translator もカスタムドメインのエンドポイントから呼べます）。Translator 用のリソースを別に作る必要はありません。
@@ -43,7 +43,7 @@ Azure Translator のテキスト翻訳 API（GA `2026-06-06`）で、①**NMT**�
 
 ### 1. 共通リソースの名前を変数に入れる
 ```powershell
-$RG = "rg-ai103"
+$RG = "rg-udemy-ai-103-training"
 $FOUNDRY = az cognitiveservices account list --resource-group $RG --query "[?kind=='AIServices'] | [0].name" -o tsv
 $FOUNDRY
 ```

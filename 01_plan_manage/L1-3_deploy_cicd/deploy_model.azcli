@@ -6,7 +6,7 @@
 # 認証はキーレス: 事前に `az login` 済みであること（APIキーは使わない）。
 
 # --- 0) 変数（自分の値に置き換える）-------------------------------------------
-$RG = "rg-ai103-l13"             # 練習用（講座共通の rg-ai103 とは別。最後に丸ごと消す）
+$RG = "rg-udemy-ai-103-training-l13"             # 練習用（講座共通の rg-udemy-ai-103-training とは別。最後に丸ごと消す）
 $ACCOUNT = "ai103-l13-$(Get-Random -Minimum 10000 -Maximum 99999)"          # Foundry リソース名。サブドメインになるので「全世界で一意・小文字」
                                       # ⚠️ 取得済みの名前だと CustomDomainInUse で弾かれる。末尾に自分用の英数字を足すこと
 $LOCATION = "japaneast"

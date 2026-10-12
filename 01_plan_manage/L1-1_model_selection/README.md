@@ -12,7 +12,7 @@
 | `requirements.txt` | Python 依存パッケージ |
 
 ## 前提
-- L0-3（Hello, Foundry）を終えていること。L0-3 で作った**講座共通のリソース**（リソースグループ `rg-ai103`・Foundry リソース・プロジェクト `ai103-project`・`gpt-5.4-nano` のデプロイ・自分への **Foundry User** ロール）をそのまま使います。
+- L0-3（Hello, Foundry）を終えていること。L0-3 で作った**講座共通のリソース**（リソースグループ `rg-udemy-ai-103-training`・Foundry リソース・プロジェクト `ai103-project`・`gpt-5.4-nano` のデプロイ・自分への **Foundry User** ロール）をそのまま使います。
 - `az login` 済み ／ Python 3.11+
 
 ## 進め方（コピペで実行できます）
@@ -39,7 +39,7 @@
 ### 1. 共通の Foundry リソースの名前を確かめる
 L0-3 で作った Foundry リソースの名前（末尾に乱数が付いています）を、変数 `$FOUNDRY` に入れて表示します。
 ```powershell
-$FOUNDRY = az cognitiveservices account list --resource-group rg-ai103 --query "[?kind=='AIServices'] | [0].name" -o tsv
+$FOUNDRY = az cognitiveservices account list --resource-group rg-udemy-ai-103-training --query "[?kind=='AIServices'] | [0].name" -o tsv
 $FOUNDRY
 ```
 `ai103-foundry-<数字>` が表示されればOKです。手順2〜4はこの変数を使うので、**同じターミナルで続けて**実行してください。
@@ -49,7 +49,7 @@ $FOUNDRY
 ```powershell
 az cognitiveservices account deployment create `
   --name $FOUNDRY `
-  --resource-group rg-ai103 `
+  --resource-group rg-udemy-ai-103-training `
   --deployment-name gpt-5.4 `
   --model-name gpt-5.4 `
   --model-version "2026-03-05" `
@@ -66,7 +66,7 @@ az cognitiveservices account deployment create `
 ```powershell
 az cognitiveservices account deployment list `
   --name $FOUNDRY `
-  --resource-group rg-ai103 `
+  --resource-group rg-udemy-ai-103-training `
   --query "[].{name:name, model:properties.model.name, sku:sku.name}" -o table
 ```
 `gpt-5.4` と `gpt-5.4-nano` の2行が出れば準備完了です。ここに出る `name`（デプロイ名）を、手順6で `.env` に書きます。
@@ -75,7 +75,7 @@ az cognitiveservices account deployment list `
 ```powershell
 az cognitiveservices account project show `
   --name $FOUNDRY `
-  --resource-group rg-ai103 `
+  --resource-group rg-udemy-ai-103-training `
   --project-name ai103-project `
   --query 'properties.endpoints."AI Foundry API"' -o tsv
 ```
@@ -144,12 +144,12 @@ az rest --method get `
 手順2の代わりに、最下位ティアでも既定クォータが付く2つのモデルをデプロイします（手順1の `$FOUNDRY` を使うので同じターミナルで実行）。
 ```powershell
 az cognitiveservices account deployment create `
-  --name $FOUNDRY --resource-group rg-ai103 `
+  --name $FOUNDRY --resource-group rg-udemy-ai-103-training `
   --deployment-name gpt-5-mini --model-name gpt-5-mini --model-version "2025-08-07" `
   --model-format OpenAI --sku-capacity 10 --sku-name GlobalStandard `
   --query "{name:name, state:properties.provisioningState}" -o table
 az cognitiveservices account deployment create `
-  --name $FOUNDRY --resource-group rg-ai103 `
+  --name $FOUNDRY --resource-group rg-udemy-ai-103-training `
   --deployment-name gpt-4.1-mini --model-name gpt-4.1-mini --model-version "2025-04-14" `
   --model-format OpenAI --sku-capacity 10 --sku-name GlobalStandard `
   --query "{name:name, state:properties.provisioningState}" -o table
@@ -194,10 +194,10 @@ MODEL_SMALL=gpt-4.1-mini    # 非推論モデル。速く・安い＝「小さ�
 
 ## 後片付け
 - このハンズオンは**推論を数回**するだけです。デプロイを置いておくだけでは課金されません（従量課金の GlobalStandard）。
-- リソースグループ `rg-ai103` は**講座の最後まで共通で使うので、消さないでください**。
+- リソースグループ `rg-udemy-ai-103-training` は**講座の最後まで共通で使うので、消さないでください**。
 - `gpt-5.4` のデプロイだけを片付けたい場合は、次を実行します（以降のレッスンで必要になったら、また手順2で作り直せます）。
   ```powershell
-  az cognitiveservices account deployment delete --name $FOUNDRY --resource-group rg-ai103 --deployment-name gpt-5.4
+  az cognitiveservices account deployment delete --name $FOUNDRY --resource-group rg-udemy-ai-103-training --deployment-name gpt-5.4
   ```
 
 ## 注意（揮発情報）

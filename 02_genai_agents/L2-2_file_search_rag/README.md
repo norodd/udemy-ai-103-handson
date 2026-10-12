@@ -18,7 +18,7 @@
 | `requirements.txt` | Python 依存パッケージ（`azure-ai-projects>=2.0.0` は 1.x と非互換。`openai` は依存として入る） |
 
 ## 前提
-- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-ai103`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
+- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-udemy-ai-103-training`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
 - L1-1 でデプロイした `gpt-5.4` を使います（エージェントの File Search に対応。無い場合は L1-1 の README 手順2でデプロイ）。
 - `az login` 済み ／ Python 3.11+
 - **講座共通のリソースは変更しません**。実行中だけベクトルストアなどを作り、終わるたびに削除します。
@@ -48,7 +48,7 @@
 
 ### 1. 共通リソースの名前を変数に入れる
 ```powershell
-$RG = "rg-ai103"
+$RG = "rg-udemy-ai-103-training"
 $FOUNDRY = az cognitiveservices account list --resource-group $RG --query "[?kind=='AIServices'] | [0].name" -o tsv
 $FOUNDRY
 ```

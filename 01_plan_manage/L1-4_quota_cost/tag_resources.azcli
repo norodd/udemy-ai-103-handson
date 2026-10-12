@@ -4,7 +4,7 @@
 # ※ PowerShell 前提。1 行ずつ実行するのが分かりやすい。
 
 # --- 変数 (自分の環境に合わせて変更) ---
-$RG = "rg-ai103"                             # 講座共通のリソースグループ
+$RG = "rg-udemy-ai-103-training"                             # 講座共通のリソースグループ
 $FOUNDRY = az cognitiveservices account list --resource-group $RG --query "[?kind=='AIServices'] | [0].name" -o tsv
 
 # 1) リソースグループにタグを付ける (merge = 既存タグを保持して追加)

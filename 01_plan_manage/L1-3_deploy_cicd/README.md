@@ -18,7 +18,7 @@
 
 ## 前提
 - L0-3（Hello, Foundry）を終えていること（`az login` 済み・Python 3.11+・Azure CLI 2.80.0 以上）
-- このレッスンは **「Foundry リソースを作ること」そのものが主題**なので、講座共通のリソース（`rg-ai103`）は使わず、**練習用のリソースグループ `rg-ai103-l13` に作って、最後に丸ごと消します**。共通のリソースには一切触れません。
+- このレッスンは **「Foundry リソースを作ること」そのものが主題**なので、講座共通のリソース（`rg-udemy-ai-103-training`）は使わず、**練習用のリソースグループ `rg-udemy-ai-103-training-l13` に作って、最後に丸ごと消します**。共通のリソースには一切触れません。
 - 作成には、サブスクリプションかリソースグループで **Contributor 以上**が必要です。
 
 ## 進め方（コピペで実行できます）
@@ -52,7 +52,7 @@
 ### 1. 練習用の名前を変数に決める
 Foundry リソースの名前はサブドメイン（`https://<名前>.services.ai.azure.com`）になるので**世界で一意**にする必要があり、末尾に乱数を付けます。
 ```powershell
-$RG = "rg-ai103-l13"
+$RG = "rg-udemy-ai-103-training-l13"
 $LOCATION = "japaneast"
 $ACCOUNT = "ai103-l13-$(Get-Random -Minimum 10000 -Maximum 99999)"
 $PROJECT = "ai103-l13-proj"
@@ -188,7 +188,7 @@ python main.py
 `✅ デプロイは正常に推論できています。` と出れば、作ったデプロイが実際に呼べる状態です。
 
 ### 14. 後片付け（練習用のリソースグループを消す）
-このレッスンで作ったものは、練習用のリソースグループ `rg-ai103-l13` にまとまっています。**講座共通の `rg-ai103` ではない**ことを確かめてから削除します。
+このレッスンで作ったものは、練習用のリソースグループ `rg-udemy-ai-103-training-l13` にまとまっています。**講座共通の `rg-udemy-ai-103-training` ではない**ことを確かめてから削除します。
 ```powershell
 $RG
 az group delete --name $RG --yes --no-wait
@@ -205,7 +205,7 @@ az cognitiveservices account purge --name $ACCOUNT --resource-group $RG --locati
 ## CI/CD 雛形（任意・次のレクチャー）
 
 - `github-workflow-sample/evaluate-and-deploy.yml` をリポジトリ直下 `.github/workflows/` にコピーし、OIDC（キーレス）と各リポジトリ変数を設定すると、PR で評価ゲート・main で評価→デプロイが動きます。
-- 動かすには、ほかに次の3つが要ります：①評価対象の **Foundry エージェント**（`AGENT_IDS` に `名前:バージョン` で指定）②フェデレーション資格情報を付けた ID への**ロール割り当て**（評価とデプロイに必要な権限）③デプロイ先の**練習用リソースグループ**（講座共通の `rg-ai103` は指定しない）。
+- 動かすには、ほかに次の3つが要ります：①評価対象の **Foundry エージェント**（`AGENT_IDS` に `名前:バージョン` で指定）②フェデレーション資格情報を付けた ID への**ロール割り当て**（評価とデプロイに必要な権限）③デプロイ先の**練習用リソースグループ**（講座共通の `rg-udemy-ai-103-training` は指定しない）。
 - `ai-agent-evals` は採点結果を Summary に出すだけで、**点数が低くてもジョブは失敗しません**。点数で deploy を止めたいときは、基準に届かなければ `exit 1` するステップを evaluate ジョブに足します。
 
 ## 注意（揮発情報）

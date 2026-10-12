@@ -17,9 +17,9 @@ Azure AI Search に **ナレッジソース**（Blob の文書）と **ナレッ
 | `requirements.txt` | Python 依存パッケージ（`azure-ai-projects>=2.0.0`、`azure-identity`、`python-dotenv`、`requests`） |
 
 ## 前提
-- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-ai103`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール・`gpt-5.4` のデプロイ）。
+- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-udemy-ai-103-training`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール・`gpt-5.4` のデプロイ）。
 - `az login` 済み ／ Python 3.11+
-- 新しいリソースグループを作ってロールを付けるので、**サブスクリプション**の **Owner** か **User Access Administrator** が要ります（`rg-ai103` だけの Owner では足りません）。
+- 新しいリソースグループを作ってロールを付けるので、**サブスクリプション**の **Owner** か **User Access Administrator** が要ります（`rg-udemy-ai-103-training` だけの Owner では足りません）。
 - **費用**：Azure AI Search の Basic は、**置いておくだけで時間単位の課金**があります（Free はマネージド ID を使えないので、この構成では使えません）。ほかは推論と埋め込みのトークン代だけです。
 - このハンズオンで作る Search とストレージは、後の「検索パイプラインをエージェントにつなぐ」ハンズオン（`05_info_extraction/L5-1_search_grounding`）でも使います。**続けて進めるなら残し、やめるなら手順12で消します**。
 
@@ -51,7 +51,7 @@ Azure AI Search に **ナレッジソース**（Blob の文書）と **ナレッ
 
 ### 1. 共通リソースの名前を変数に入れる
 ```powershell
-$RG = "rg-ai103"
+$RG = "rg-udemy-ai-103-training"
 $PROJECT = "ai103-project"
 $FOUNDRY = az cognitiveservices account list --resource-group $RG --query "[?kind=='AIServices'] | [0].name" -o tsv
 $FOUNDRY_ID = az cognitiveservices account show --name $FOUNDRY --resource-group $RG --query id -o tsv
@@ -83,7 +83,7 @@ az cognitiveservices account deployment create `
 
 ### 3. Search 用のリソースグループ・Azure AI Search・ストレージを作る
 ```powershell
-$SRG = "rg-ai103-search"
+$SRG = "rg-udemy-ai-103-training-search"
 $SEARCH = "ai103-search-$(Get-Random -Maximum 99999)"
 $ST = "ai103st$(Get-Random -Maximum 99999)"
 az group create --name $SRG --location japaneast --query properties.provisioningState -o tsv
@@ -98,7 +98,7 @@ az storage account create --name $ST --resource-group $SRG --location japaneast 
 - Search は **Basic** で作ります。**システム割り当てマネージド ID**（`--identity-type SystemAssigned`）は、Search が Blob と埋め込みモデルをキー無しで読むために要ります。
 - `--auth-options aadOrApiKey` で、**ロール（Microsoft Entra ID）でも呼べる**ようにします（既定は API キーだけ）。
 - Search の作成には **10〜20分**かかります。終わると `basic  SystemAssigned  Succeeded` が表示されます。
-- 別のターミナルで続きをやるときは、名前を取り直します：`$SRG = "rg-ai103-search"; $SEARCH = az search service list -g $SRG --query "[0].name" -o tsv; $ST = az storage account list -g $SRG --query "[0].name" -o tsv`
+- 別のターミナルで続きをやるときは、名前を取り直します：`$SRG = "rg-udemy-ai-103-training-search"; $SEARCH = az search service list -g $SRG --query "[0].name" -o tsv; $ST = az storage account list -g $SRG --query "[0].name" -o tsv`
 
 ### 4. 文書をストレージにアップロードする
 ```powershell
@@ -234,7 +234,7 @@ az role assignment delete --assignee $SEARCH_MI --role "Cognitive Services User"
 $SRG
 az group delete --name $SRG --yes --no-wait
 ```
-- ③の前に、`$SRG` が `rg-ai103-search` であることを目で確かめます。講座共通の `rg-ai103` は消しません。
+- ③の前に、`$SRG` が `rg-udemy-ai-103-training-search` であることを目で確かめます。講座共通の `rg-udemy-ai-103-training` は消しません。
 - エージェントと会話は、`main.py` が最後に消しています（手順11の `残り 0 件`）。エージェントや接続を消しても、ナレッジベースとナレッジソースは Search 側に残るので、①で別に消します。
 
 ## つまずきポイント

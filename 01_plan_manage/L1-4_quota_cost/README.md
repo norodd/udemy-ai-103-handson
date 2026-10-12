@@ -15,7 +15,7 @@
 | `requirements.txt` | Python 依存パッケージ |
 
 ## 前提
-- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-ai103`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
+- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-udemy-ai-103-training`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール）。
 - L1-1 でデプロイした `gpt-5.4` を使います（無い場合は、L1-1 の README 手順2でデプロイするか、`gpt-5.4-nano` に読み替え）。
 - ロール：クォータの閲覧は、サブスクリプションで **Reader 以上**（最小権限なら **Cognitive Services Usages Reader**）。タグ付与は対象リソースに **Contributor** 以上。
 - **新しいリソースは作りません**。講座共通のリソースにタグを足すだけです。
@@ -46,7 +46,7 @@
 
 ### 1. 共通リソースの名前とサブスクリプションを変数に入れる
 ```powershell
-$RG = "rg-ai103"
+$RG = "rg-udemy-ai-103-training"
 $FOUNDRY = az cognitiveservices account list --resource-group $RG --query "[?kind=='AIServices'] | [0].name" -o tsv
 $env:AZURE_SUBSCRIPTION_ID = az account show --query id -o tsv
 $FOUNDRY
@@ -158,7 +158,7 @@ japaneast (GlobalStandard): <上限-使用> 利用可能
 ## 後片付け
 - このハンズオンは**推論を数回**するだけ（数円程度）。`check_quota` とタグは無料です。**新しいリソースは作っていません**。
 - 付けたタグは、講座共通のリソースを表すものなので**そのまま残して構いません**。外すときは `--operation delete` を使います（例：`az tag update --resource-id <id> --operation delete --tags project=ai103-course env=dev costcenter=training`）。
-- ⚠️ `rg-ai103` は後続のレッスンでも使うので、**リソースグループごとの削除はしないでください**。
+- ⚠️ `rg-udemy-ai-103-training` は後続のレッスンでも使うので、**リソースグループごとの削除はしないでください**。
 
 ## 注意（揮発情報）
 - **ARM の api-version**、**capacity unit の RPM/TPM 比**、**SDK 既定リトライ回数**は変動。公式ドキュメントで都度確認。

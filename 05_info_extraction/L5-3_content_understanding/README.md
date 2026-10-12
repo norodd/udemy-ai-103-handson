@@ -15,7 +15,7 @@ Azure Content Understanding の**カスタムアナライザー**を作り、請
 | `README.md` | このファイル（手順とコマンド） |
 
 ## 前提
-- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-ai103`・Foundry リソース・**Foundry User ロール**）。
+- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-udemy-ai-103-training`・Foundry リソース・**Foundry User ロール**）。
 - `az login` 済み ／ Python 3.11+
 - **Content Understanding は、講座共通の Foundry リソースにそのまま入っています**（エンドポイントは `https://<リソース名>.services.ai.azure.com/`）。専用のリソースは要りません。
 - 補完モデル `gpt-5.4` は、モデルを選ぶ回（L1-1）でデプロイ済みの前提です。埋め込みモデル `text-embedding-3-large` は手順3でデプロイします。
@@ -48,7 +48,7 @@ Azure Content Understanding の**カスタムアナライザー**を作り、請
 
 ### 1. 共通リソースの名前を変数に入れる
 ```powershell
-$RG = "rg-ai103"
+$RG = "rg-udemy-ai-103-training"
 $FOUNDRY = az cognitiveservices account list --resource-group $RG --query "[?kind=='AIServices'] | [0].name" -o tsv
 $FOUNDRY
 ```

@@ -77,7 +77,7 @@ az rest --method get `
 ### 3. リソースグループを作る
 このリソースグループと、次に作る Foundry リソース・プロジェクトは、**講座全体で共通**に使います（以降のレッスンは、ここで作るプロジェクトのエンドポイントを使い回します）。
 ```powershell
-az group create --name rg-ai103 --location japaneast `
+az group create --name rg-udemy-ai-103-training --location japaneast `
   --query "{name:name, state:properties.provisioningState}" -o table
 ```
 
@@ -87,7 +87,7 @@ az group create --name rg-ai103 --location japaneast `
 $FOUNDRY = "ai103-foundry-$(Get-Random -Minimum 10000 -Maximum 99999)"
 az cognitiveservices account create `
   --name $FOUNDRY `
-  --resource-group rg-ai103 `
+  --resource-group rg-udemy-ai-103-training `
   --kind AIServices `
   --sku S0 `
   --location japaneast `
@@ -96,16 +96,16 @@ az cognitiveservices account create `
   --allow-project-management true `
   --query "{name:name, kind:kind, state:properties.provisioningState}" -o table
 ```
-- 手順5〜8も `$FOUNDRY` を使います。**同じターミナルで続けて**実行してください。ターミナルを開き直した場合は、`$FOUNDRY = az cognitiveservices account list -g rg-ai103 --query "[0].name" -o tsv` で取り直せます。
+- 手順5〜8も `$FOUNDRY` を使います。**同じターミナルで続けて**実行してください。ターミナルを開き直した場合は、`$FOUNDRY = az cognitiveservices account list -g rg-udemy-ai-103-training --query "[0].name" -o tsv` で取り直せます。
 - 使用済みの名前だと `CustomDomainInUse` になります。1行目からもう一度実行すれば、別の乱数で作り直せます。
 - `--assign-identity` が無いと、次のプロジェクト作成が `managed identity must be enabled` で失敗します。
-- ⚠️ **既存アカウントに対してこのコマンドを再実行すると** `(BadRequest) PublicNetworkAccess is required for this resouce`（Azure側のスペルミスもそのまま）で失敗します。`--public-network-access Enabled` という引数は存在しません（`unrecognized arguments`）。**既にリソースがある場合は `create` を再実行せず**、`az cognitiveservices account show --name $FOUNDRY --resource-group rg-ai103` で状態を確認するだけにしてください。
+- ⚠️ **既存アカウントに対してこのコマンドを再実行すると** `(BadRequest) PublicNetworkAccess is required for this resouce`（Azure側のスペルミスもそのまま）で失敗します。`--public-network-access Enabled` という引数は存在しません（`unrecognized arguments`）。**既にリソースがある場合は `create` を再実行せず**、`az cognitiveservices account show --name $FOUNDRY --resource-group rg-udemy-ai-103-training` で状態を確認するだけにしてください。
 
 ### 5. プロジェクトを作る
 ```powershell
 az cognitiveservices account project create `
   --name $FOUNDRY `
-  --resource-group rg-ai103 `
+  --resource-group rg-udemy-ai-103-training `
   --project-name ai103-project `
   --location japaneast `
   --query "{name:name, state:properties.provisioningState}" -o table
@@ -116,7 +116,7 @@ az cognitiveservices account project create `
 ```powershell
 az cognitiveservices account deployment create `
   --name $FOUNDRY `
-  --resource-group rg-ai103 `
+  --resource-group rg-udemy-ai-103-training `
   --deployment-name gpt-5.4-nano `
   --model-name gpt-5.4-nano `
   --model-version "2026-03-17" `
@@ -132,7 +132,7 @@ az cognitiveservices account deployment create `
 ```powershell
 az cognitiveservices account project show `
   --name $FOUNDRY `
-  --resource-group rg-ai103 `
+  --resource-group rg-udemy-ai-103-training `
   --project-name ai103-project `
   --query 'properties.endpoints."AI Foundry API"' -o tsv
 ```
@@ -145,7 +145,7 @@ az cognitiveservices account project show `
 az role assignment create `
   --role "Foundry User" `
   --assignee (az ad signed-in-user show --query id -o tsv) `
-  --scope (az cognitiveservices account show --name $FOUNDRY --resource-group rg-ai103 --query id -o tsv) `
+  --scope (az cognitiveservices account show --name $FOUNDRY --resource-group rg-udemy-ai-103-training --query id -o tsv) `
   --query "{principalType:principalType, created:createdOn}" -o table
 ```
 - `principalType` が `User` の行が出れば割り当てできています。反映まで数分かかることがあります（手順11で 403 が出たら、少し待ってから再実行）。
@@ -195,5 +195,5 @@ python main.py
 ## 後片付け
 ここで作ったリソースグループ・Foundry リソース・プロジェクトは、**講座の最後まで共通で使います**。消さずに残しておいてください（Standard デプロイは呼び出さない限り課金されません）。学習を長く中断する場合や、講座を終えて完全に片付ける場合だけ、次を実行します：
 ```powershell
-az group delete --name rg-ai103 --yes --no-wait
+az group delete --name rg-udemy-ai-103-training --yes --no-wait
 ```

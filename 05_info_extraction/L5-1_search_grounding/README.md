@@ -15,8 +15,8 @@ Blob に置いた文書を、Azure AI Search の **スキルセット**（Text S
 | `requirements.txt` | Python 依存パッケージ（`azure-search-documents`、`azure-ai-projects>=2.0.0`、`azure-identity`、`python-dotenv`） |
 
 ## 前提
-- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-ai103`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール・`gpt-5.4` のデプロイ）。
-- **Azure AI Search（Basic）とストレージ**は、Foundry IQ のハンズオン（`02_genai_agents/L2-3_foundry_iq`）の手順3で作った `rg-ai103-search` のものを使います。まだ作っていない（または消した）場合は、そのハンズオンの **README 手順3（作成）と手順4の上2行（自分へのロール）** を先に実行してください。
+- L0-3（Hello, Foundry）を終えていること（講座共通のリソースグループ `rg-udemy-ai-103-training`・Foundry リソース・プロジェクト `ai103-project`・Foundry User ロール・`gpt-5.4` のデプロイ）。
+- **Azure AI Search（Basic）とストレージ**は、Foundry IQ のハンズオン（`02_genai_agents/L2-3_foundry_iq`）の手順3で作った `rg-udemy-ai-103-training-search` のものを使います。まだ作っていない（または消した）場合は、そのハンズオンの **README 手順3（作成）と手順4の上2行（自分へのロール）** を先に実行してください。
 - `az login` 済み ／ Python 3.11+
 - ロールを付けるので、サブスクリプション（またはリソースグループ）の **Owner** か **User Access Administrator** が要ります。
 - **費用**：Azure AI Search の Basic は、**置いておくだけで時間単位の課金**があります。このハンズオンの最後（手順12）で、Search とストレージをリソースグループごと消します。ほかは埋め込みと推論のトークン代だけです。
@@ -49,12 +49,12 @@ Blob に置いた文書を、Azure AI Search の **スキルセット**（Text S
 
 ### 1. リソースの名前を変数に入れる
 ```powershell
-$RG = "rg-ai103"
+$RG = "rg-udemy-ai-103-training"
 $PROJECT = "ai103-project"
 $FOUNDRY = az cognitiveservices account list --resource-group $RG --query "[?kind=='AIServices'] | [0].name" -o tsv
 $FOUNDRY_ID = az cognitiveservices account show --name $FOUNDRY --resource-group $RG --query id -o tsv
 $PROJECT_ID = "$FOUNDRY_ID/projects/$PROJECT"
-$SRG = "rg-ai103-search"
+$SRG = "rg-udemy-ai-103-training-search"
 $SEARCH = az search service list --resource-group $SRG --query "[0].name" -o tsv
 $ST = az storage account list --resource-group $SRG --query "[0].name" -o tsv
 "$FOUNDRY / $SEARCH / $ST"
@@ -226,14 +226,14 @@ $SRG
 az group delete --name $SRG --yes --no-wait
 ```
 - ②の最後の数字は、Search のマネージド ID に残っている割り当ての数です。ストレージへの Storage Blob Data Reader の1件は、③でリソースグループごと消えます。
-- ③の前に、`$SRG` が `rg-ai103-search` であることを目で確かめます。講座共通の `rg-ai103` は消しません。
-- 削除は数分で終わります。`az group exists --name rg-ai103-search` が `false` を返せば完了です。
+- ③の前に、`$SRG` が `rg-udemy-ai-103-training-search` であることを目で確かめます。講座共通の `rg-udemy-ai-103-training` は消しません。
+- 削除は数分で終わります。`az group exists --name rg-udemy-ai-103-training-search` が `false` を返せば完了です。
 - Foundry IQ のハンズオンの手順12②③と同じ後片付けです。どちらか一方で1回やれば足ります。
 
 ## つまずきポイント
 | 症状 | 原因と対処 |
 |---|---|
-| 手順1で Search・ストレージの名前が空 | `rg-ai103-search` がまだ無い。Foundry IQ のハンズオンの手順3で作る |
+| 手順1で Search・ストレージの名前が空 | `rg-udemy-ai-103-training-search` がまだ無い。Foundry IQ のハンズオンの手順3で作る |
 | 手順4で `AuthorizationPermissionMismatch` | 自分の Storage Blob Data Contributor が無いか未反映。Foundry IQ のハンズオンの手順4で付け、1〜2分待つ |
 | 手順8で 403 | 自分の Search Service Contributor / Search Index Data Contributor が未反映。数分待つ |
 | 手順8の取り込みで失敗が1件以上 | Search のマネージド ID に Storage Blob Data Reader（ストレージ）か Cognitive Services User（Foundry）が無い |
