@@ -87,11 +87,14 @@ az rest --method get `
 
 ### 4. プロジェクトのエンドポイントを取得する
 ```powershell
-az cognitiveservices account project show `
+$result = az cognitiveservices account project show `
   --name $FOUNDRY `
   --resource-group $RG `
-  --project-name $PROJECT `
-  --query 'properties.endpoints."AI Foundry API"' -o tsv
+  --project-name ai103-project `
+  -o json | ConvertFrom-Json
+
+$result.properties.endpoints.'AI Foundry API'
+
 ```
 返ってきた URL（末尾が `/api/projects/ai103-project`）を、手順6で `.env` に貼ります。
 
